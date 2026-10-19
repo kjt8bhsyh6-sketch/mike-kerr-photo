@@ -1,41 +1,48 @@
 # Editing Mike Kerr's photo site
 
-The site is just a few plain files. No build step. The list of photos lives in `photos.js`.
+Plain HTML/CSS/JS, hosted free on GitHub Pages. The photo list lives in `photos.js`.
+One small script, `tools/build.py`, makes the web-ready images and refreshes a few generated bits of `index.html`.
+
+One-time setup: `pip install --user pillow pillow-heif` (Pillow 11.3 or newer).
 
 ## Add a photo
-1. **Convert the iPhone photo (HEIC) to JPG.** One-time setup: `pip install --user pillow pillow-heif`. Then, from this folder (replace `NAME`):
+1. Copy the iPhone photo (HEIC or JPG) into this folder, named simply, e.g. `lake.heic`.
+2. Run (from this folder):
    ```
-   python3 -c "
-   from pillow_heif import register_heif_opener; register_heif_opener()
-   from PIL import Image, ImageOps
-   im = ImageOps.exif_transpose(Image.open('NAME.heic')).convert('RGB')
-   for n in (2000, 800):
-       c = im.copy(); c.thumbnail((n, n)); c.save(f'photos/NAME-{n}.jpg', quality=82, optimize=True)
-   "
+   python3 tools/build.py lake.heic
    ```
-   This fixes rotation and saves new JPGs **without** location (GPS) data. (Or you can export as JPG from Photos on a Mac and resize it.)
-2. **Put the files in `photos/`**: `NAME-2000.jpg` (large) and `NAME-800.jpg` (thumbnail).
-3. **Edit `photos.js`.** Copy an existing `{ ... }` block, paste it, and change it:
-   - `file`: the large image, e.g. `"photos/NAME-2000.jpg"`
-   - `thumb`: the thumbnail, e.g. `"photos/NAME-800.jpg"`
-   - `title`: a short name
+   It writes `photos/lake-800/1200/1600/2000` as `.avif`, `.webp` and `.jpg`, plus `photos/lake-og.jpg` (1200×630, used when the site is shared on social media).
+   Every image is rotated correctly, converted to sRGB, has **all camera/GPS data removed**, and gets "Mike Kerr" / "© Mike Kerr. All rights reserved." embedded as creator/copyright.
+   It prints a line like `name: "lake", width: 1500, height: 2000,`.
+3. Edit `photos.js`: copy an existing `{ ... }` block, paste it, and set
+   - `name`, `width`, `height`: paste the line the script printed
+   - `title`: short name (also used for the photo's link, e.g. `#lake-at-dawn`)
    - `caption`: a sentence shown under the photo
    - `alt`: a plain description for people using screen readers
    Separate blocks with a comma.
+4. Run `python3 tools/build.py` once more (no file name). This refreshes the no-JavaScript gallery, the search-engine data (JSON-LD), the share image tags and `sitemap.xml` from `photos.js`.
+   (You can do steps 2 and 4 in one go if you edit `photos.js` first.)
 
-## Remove a photo
-Delete its `{ ... }` block from `photos.js` (and the comma), then optionally delete its files from `photos/`.
+The source HEIC does not need to stay in the folder. Note: anything committed here is public.
 
-## Reorder photos
-Move the blocks in `photos.js`. The **first** one is the big hero image at the top.
+## Remove / reorder photos
+Delete or move blocks in `photos.js`, then run `python3 tools/build.py`. The **first** photo is the big hero at the top and the social-share image.
+Optionally delete the removed photo's files from `photos/`.
 
-## Publish your changes
+## Check locally
+```
+python3 -m http.server 8000
+```
+then open http://localhost:8000/
+
+## Publish
 ```
 git add -A
 git commit -m "Update photos"
 git push
 ```
-GitHub Pages updates the live site in a minute or two: https://kjt8bhsyh6-sketch.github.io/mike-kerr-photo/
+Live in a minute or two: https://kjt8bhsyh6-sketch.github.io/mike-kerr-photo/
 
-## About section
-Edit the placeholder text in the About section of `index.html`.
+## Text placeholders
+- About + contact: the About section of `index.html`.
+- Usage/licensing contact: `usage.html` (replace "[placeholder]").

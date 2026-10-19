@@ -8,25 +8,36 @@ a{color:#e8e8e8}
 nav{margin-left:auto;display:flex;gap:1rem}
 nav a{text-decoration:none;color:#bbb}nav a:hover{color:#fff}
 .hero{margin:0}
-.hero button{all:unset;display:block;cursor:zoom-in;width:100%}
-.hero img{display:block;width:100%;max-height:85vh;object-fit:contain;background:#000}
+.hero a{display:block;cursor:zoom-in;background:#000}
+.hero picture{display:block}
+.hero img{display:block;margin:0 auto;width:auto;max-width:100%;height:auto;max-height:85vh}
 .hero .cap{padding:.6rem 1.5rem;color:#aaa;font-size:.9rem}
 section h2{font-weight:500;letter-spacing:.05em;padding:0 1.5rem}
-.grid{list-style:none;margin:0;padding:0 1.5rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
-.grid button{all:unset;cursor:zoom-in;display:block;width:100%}
-.grid button:focus-visible,.hero button:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.grid img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px}
+/* Justified rows: each tile grows in proportion to its aspect ratio, so nothing is cropped. */
+.grid{list-style:none;margin:0;padding:0 1.5rem 2rem;display:flex;flex-wrap:wrap;gap:1rem}
+.grid li{flex:calc(var(--ar,1)*100) 1 calc(var(--ar,1)*280px);min-width:0}
+.grid li.spacer{flex:10000 1 0;height:0}
+.grid a{display:block;cursor:zoom-in}
+.grid a:focus-visible,.hero a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.grid img{display:block;width:100%;height:auto;border-radius:4px;background:#1a1a1a}
+@media (max-width:600px){.grid li{flex-basis:100%}}
 .grid .meta{font-size:.85rem;color:#aaa;padding-top:.3rem}
 .by{display:block;color:#888;font-size:.8rem}
 .about{max-width:42rem;padding-bottom:2rem}.about p{padding:0 1.5rem}
 .placeholder{color:#999;font-style:italic}
 .site-footer{border-top:1px solid #222;padding:1rem 1.5rem;color:#888;font-size:.85rem;text-align:center}
 .site-footer p{margin:.2rem 0}
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:10}
-.lightbox[hidden]{display:none}
+.lightbox{border:0;padding:0;margin:0;width:100vw;height:100vh;max-width:none;max-height:none;background:rgba(0,0,0,.95);color:#ccc}
+.lightbox[open]{display:flex;align-items:center;justify-content:center}
+.lightbox::backdrop{background:rgba(0,0,0,.9)}
 .lightbox figure{margin:0;max-width:92vw;text-align:center}
-.lightbox img{max-width:92vw;max-height:82vh;object-fit:contain}
+.lightbox picture{display:block}
+.lightbox img{display:block;margin:0 auto;width:auto;height:auto;max-width:92vw;max-height:82vh}
 .lightbox figcaption{color:#ccc;font-size:.9rem;padding-top:.5rem}
-.lightbox button{position:absolute;background:none;border:0;color:#fff;font-size:2.5rem;cursor:pointer;padding:.5rem 1rem}
+.lightbox button{position:absolute;background:none;border:0;color:#fff;font-size:2.5rem;cursor:pointer;padding:.5rem 1rem;z-index:1}
 .lightbox button:focus-visible{outline:2px solid #fff}
 .lb-close{top:.5rem;right:.5rem}.lb-prev{left:.5rem}.lb-next{right:.5rem}
+.noscript-gallery{padding:0 1.5rem}.noscript-gallery img{display:block;max-width:100%;height:auto}
+.noscript-gallery figcaption{color:#aaa;font-size:.9rem;padding:.4rem 0 1.5rem}
+h1{font-weight:500;padding:0 1.5rem}main.about h2{padding:0}main.about{padding:0 1.5rem 2rem}main.about p,main.about h1{padding:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

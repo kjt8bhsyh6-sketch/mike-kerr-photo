@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kjt8bhsyh6-sketch.github.io/mike-kerr-photo/sitemap.xml
