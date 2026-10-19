@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mike Kerr Photography</title>
+<meta name="description" content="Photography by Mike Kerr">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="./">Mike Kerr</a>
+  <span class="credit">Photography by Mike Kerr</span>
+  <nav><a href="#gallery">Gallery</a><a href="#about">About</a></nav>
+</header>
+<main>
+  <section class="hero" id="hero" aria-label="Featured photo"></section>
+  <section id="gallery" aria-labelledby="gallery-h">
+    <h2 id="gallery-h">Gallery</h2>
+    <ul class="grid" id="grid"></ul>
+  </section>
+  <section id="about" class="about" aria-labelledby="about-h">
+    <h2 id="about-h">About</h2>
+    <p class="placeholder">[Placeholder — Mike to write: a short bio, what he likes to photograph, and how to get in touch.]</p>
+  </section>
+</main>
+<footer class="site-footer">
+  <p>Photography by Mike Kerr</p>
+  <p>© Mike Kerr. All photos by Mike Kerr. All rights reserved.</p>
+</footer>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+  <button class="lb-close" aria-label="Close (Esc)">×</button>
+  <button class="lb-prev" aria-label="Previous photo">‹</button>
+  <figure>
+    <img id="lb-img" alt="">
+    <figcaption><strong id="lb-title"></strong> <span id="lb-cap"></span><span class="by">Photo by Mike Kerr</span></figcaption>
+  </figure>
+  <button class="lb-next" aria-label="Next photo">›</button>
+</div>
+<script src="photos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
