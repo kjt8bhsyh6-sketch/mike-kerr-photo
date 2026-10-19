@@ -11,15 +11,16 @@
   var hero = document.getElementById('hero'), grid = document.getElementById('grid');
   if (P[0]) {
     var h = P[0], hs = 'min(100vw, calc(85vh * '+(h.width/h.height).toFixed(4)+'))';
-    hero.innerHTML = '<a href="#'+slug(h)+'" data-i="0" aria-label="Open '+esc(h.title)+' full screen">'+picture(h, hs, 'fetchpriority="high" loading="eager" decoding="async"')+'</a>' +
-      '<p class="cap"><strong>'+esc(h.title)+'</strong> — '+esc(h.caption)+' <span class="by">Photo by Mike Kerr</span></p>';
+    if (h.height > h.width) hero.classList.add('portrait');
+    hero.innerHTML = '<a href="#'+slug(h)+'" data-i="0" aria-label="Open '+esc(h.title)+' full screen">'+picture(h, hs, 'fetchpriority="high" loading="eager"')+'</a>' +
+      '<p class="cap"><strong>'+esc(h.title)+'</strong>'+esc(h.caption)+' <span class="by">Photo by Mike Kerr</span></p>';
   }
   grid.innerHTML = P.map(function(p,i){
     var ar = p.width/p.height;
     return '<li style="--ar:'+ar.toFixed(4)+'"><a href="#'+slug(p)+'" data-i="'+i+'" aria-label="Open '+esc(p.title)+'">' +
-      picture(p, '(max-width: 600px) 100vw, '+Math.round(300*ar)+'px', 'loading="lazy" decoding="async"') +
+      picture(p, '(max-width: 600px) 100vw, '+Math.round(300*ar)+'px', 'loading="lazy"') +
       '</a><div class="meta">'+esc(p.title)+'<span class="by">Photo by Mike Kerr</span></div></li>';
-  }).join('') + '<li class="spacer" aria-hidden="true"></li>';
+  }).join('');
 
   var lb = document.getElementById('lightbox'), pic = document.getElementById('lb-pic'),
       t = document.getElementById('lb-title'), c = document.getElementById('lb-cap'), cur = 0, last = null;
@@ -27,7 +28,7 @@
   function preload(i){ var p=P[(i+P.length)%P.length]; if(!p) return; var im=new Image(); im.sizes=LBS; im.srcset=set(p, 'webp'); }
   function show(i, push){
     cur = (i+P.length)%P.length; var p = P[cur];
-    pic.outerHTML = '<picture id="lb-pic">'+picture(p, LBS, 'decoding="async"').slice(9);
+    pic.outerHTML = '<picture id="lb-pic">'+picture(p, LBS, '').slice(9);
     pic = document.getElementById('lb-pic');
     t.textContent = p.title; c.textContent = p.caption;
     var hash = '#'+slug(p);

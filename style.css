@@ -7,20 +7,26 @@ a{color:#e8e8e8}
 .credit{color:#999;font-size:.9rem}
 nav{margin-left:auto;display:flex;gap:1rem}
 nav a{text-decoration:none;color:#bbb}nav a:hover{color:#fff}
-.hero{margin:0}
-.hero a{display:block;cursor:zoom-in;background:#000}
+/* Hero: framed photo on the page background; portrait photos get text beside them on wide screens. */
+.hero{margin:0 auto;padding:2.5rem 1.5rem 3rem;max-width:1200px;display:flex;flex-direction:column;align-items:center;gap:1.25rem}
+.hero a{display:block;cursor:zoom-in;border-radius:6px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.55);line-height:0}
 .hero picture{display:block}
-.hero img{display:block;margin:0 auto;width:auto;max-width:100%;height:auto;max-height:85vh}
-.hero .cap{padding:.6rem 1.5rem;color:#aaa;font-size:.9rem}
-section h2{font-weight:500;letter-spacing:.05em;padding:0 1.5rem}
+.hero img{display:block;width:auto;max-width:100%;height:auto;max-height:85vh;background:#1a1a1a}
+.hero .cap{margin:0;max-width:40rem;text-align:center;color:#aaa;font-size:.95rem}
+.hero .cap strong{display:block;color:#e8e8e8;font-size:1.25rem;font-weight:500;letter-spacing:.03em;margin-bottom:.3rem}
+.hero .cap .by{margin-top:.6rem}
+@media (min-width:900px){
+  .hero.portrait{flex-direction:row;justify-content:center;gap:3rem}
+  .hero.portrait .cap{text-align:left;max-width:22rem}
+}
+section h2{text-align:center;font-weight:500;letter-spacing:.05em;padding:0 1.5rem}
 /* Justified rows: each tile grows in proportion to its aspect ratio, so nothing is cropped. */
-.grid{list-style:none;margin:0;padding:0 1.5rem 2rem;display:flex;flex-wrap:wrap;gap:1rem}
-.grid li{flex:calc(var(--ar,1)*100) 1 calc(var(--ar,1)*280px);min-width:0}
-.grid li.spacer{flex:10000 1 0;height:0}
+.grid{list-style:none;margin:0 auto;padding:0 1.5rem 2rem;max-width:1400px;display:flex;flex-wrap:wrap;justify-content:center;gap:1rem}
+.grid li{flex:calc(var(--ar,1)*100) 1 calc(var(--ar,1)*280px);max-width:calc(var(--ar,1)*420px);min-width:0}
 .grid a{display:block;cursor:zoom-in}
 .grid a:focus-visible,.hero a:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .grid img{display:block;width:100%;height:auto;border-radius:4px;background:#1a1a1a}
-@media (max-width:600px){.grid li{flex-basis:100%}}
+@media (max-width:600px){.grid li{flex-basis:100%;max-width:100%}}
 .grid .meta{font-size:.85rem;color:#aaa;padding-top:.3rem}
 .by{display:block;color:#888;font-size:.8rem}
 .about{max-width:42rem;padding-bottom:2rem}.about p{padding:0 1.5rem}
