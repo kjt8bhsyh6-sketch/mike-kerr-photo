@@ -46,3 +46,8 @@ Live in a minute or two: https://kjt8bhsyh6-sketch.github.io/mike-kerr-photo/
 ## Text placeholders
 - About + contact: the About section of `index.html`.
 - Usage/licensing contact: `usage.html` (replace "[placeholder]").
+
+## Automatic uploads (GitHub Actions)
+Mike can upload photos to `incoming/` in the GitHub web UI; see `MIKE-HOW-TO-UPLOAD.md` and `incoming/README.md`.
+`.github/workflows/photos.yml` runs on every push to main: it runs `tools/ingest.py` (build images, append to `photos.js`, move originals to `originals/`, rebuild), commits back as github-actions[bot], and deploys GitHub Pages (Pages source = GitHub Actions). Its own commit doesn't retrigger it.
+You can run the same thing locally: `python3 tools/ingest.py`. `originals/` and `incoming/` are not published on the website.

@@ -62,8 +62,8 @@ def save_all(im, base):
     im.save(f"{base}.webp", quality=78, method=6, **meta)
     im.save(f"{base}.avif", quality=55, speed=4, **meta)
 
-def build(src):
-    src = Path(src); name = re.sub(r"[^a-z0-9-]+", "-", src.stem.lower()).strip("-")
+def build(src, name=None):
+    src = Path(src); name = name or re.sub(r"[^a-z0-9-]+", "-", src.stem.lower()).strip("-")
     im = to_srgb(Image.open(src)); out = ROOT / "photos"; out.mkdir(exist_ok=True)
     for w in WIDTHS:
         c = im.copy(); c.thumbnail((w, w), Image.LANCZOS); save_all(c, out / f"{name}-{w}")
@@ -71,6 +71,7 @@ def build(src):
     og.save(out / f"{name}-og.jpg", quality=82, optimize=True, icc_profile=SRGB_BYTES, exif=exif_bytes(), xmp=XMP)
     big = im.copy(); big.thumbnail((2000, 2000))
     print(f'Paste into photos.js:  name: "{name}", width: {big.width}, height: {big.height},')
+    return name, big.width, big.height
 
 def load_photos():
     txt = (ROOT / "photos.js").read_text()
@@ -80,7 +81,15 @@ def load_photos():
     body = re.sub(r",\s*([\]}])", r"\1", body)                          # trailing commas
     return json.loads(body)
 
-def slug(p): return re.sub(r"[^a-z0-9]+", "-", p["title"].lower()).strip("-")
+def _s(t): return re.sub(r"[^a-z0-9]+", "-", (t or "").lower()).strip("-")
+def slugs(P):
+    """Link id per photo (#autumn-trees). Untitled/duplicate titles fall back to the file name. Mirrors app.js."""
+    seen, out = set(), []
+    for p in P:
+        s = _s(p.get("title"))
+        if not s or s == "untitled" or s in seen: s = _s(p["name"])
+        seen.add(s); out.append(s)
+    return out
 
 def srcset(p, ext): return ", ".join(f"photos/{p['name']}-{w}.{ext} {w}w" for w in WIDTHS)
 
@@ -89,17 +98,17 @@ def replace_block(text, tag, content):
     return re.sub(re.escape(a) + r".*?" + re.escape(b), lambda m: a + "\n" + content + "\n" + b, text, flags=re.S)
 
 def rebuild():
-    P = load_photos(); e = lambda s: html.escape(s or "", quote=True)
+    P = load_photos(); S = slugs(P); slug = lambda p: S[P.index(p)]; e = lambda s: html.escape(s or "", quote=True)
     ns = "\n".join(
         f'<figure id="{slug(p)}"><picture><source type="image/avif" srcset="{srcset(p,"avif")}" sizes="100vw">'
         f'<source type="image/webp" srcset="{srcset(p,"webp")}" sizes="100vw">'
         f'<img src="photos/{p["name"]}-1200.jpg" srcset="{srcset(p,"jpg")}" sizes="100vw" width="{p["width"]}" height="{p["height"]}" alt="{e(p["alt"])}"></picture>'
-        f'<figcaption><strong>{e(p["title"])}</strong> — {e(p["caption"])} Photo by Mike Kerr.</figcaption></figure>' for p in P)
+        f'<figcaption><strong>{e(p["title"])}</strong>{(" — " + e(p["caption"])) if p.get("caption") else ""} Photo by Mike Kerr.</figcaption></figure>' for p in P)
     person = {"@type": "Person", "@id": SITE + "#mike-kerr", "name": CREATOR, "url": SITE}
     graph = [person, {"@type": "WebSite", "@id": SITE + "#site", "url": SITE, "name": "Mike Kerr Photography", "author": {"@id": person["@id"]}}]
     for p in P:
         graph.append({"@type": "ImageObject", "contentUrl": f"{SITE}photos/{p['name']}-2000.jpg",
-            "url": f"{SITE}#{slug(p)}", "name": p["title"], "caption": p["caption"], "description": p["alt"],
+            "url": f"{SITE}#{slug(p)}", "name": p["title"], "caption": p.get("caption") or p["title"], "description": p["alt"],
             "width": p["width"], "height": p["height"], "creator": {"@id": person["@id"], "@type": "Person", "name": CREATOR},
             "creditText": CREATOR, "copyrightNotice": COPYRIGHT, "copyrightHolder": {"@id": person["@id"]},
             "license": SITE + "usage.html", "acquireLicensePage": SITE + "usage.html"})

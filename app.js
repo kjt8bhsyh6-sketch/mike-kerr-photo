@@ -1,7 +1,10 @@
 (function(){
   var P = window.PHOTOS || [], W = [800, 1200, 1600, 2000];
   var esc = function(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML.replace(/"/g,'&quot;');};
-  var slug = function(p){return p.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');};
+  var _s = function(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');};
+  // Link id per photo (#autumn-trees); untitled/duplicate titles fall back to the file name. Mirrors tools/build.py.
+  var seen = {}; P.forEach(function(p){ var s=_s(p.title); if(!s||s==='untitled'||seen[s]) s=_s(p.name); seen[s]=1; p._slug=s; });
+  var slug = function(p){return p._slug;};
   var set = function(p,ext){return W.map(function(w){return 'photos/'+p.name+'-'+w+'.'+ext+' '+w+'w';}).join(', ');};
   function picture(p, sizes, attrs){
     return '<picture><source type="image/avif" srcset="'+set(p,'avif')+'" sizes="'+sizes+'">' +
@@ -13,7 +16,7 @@
     var h = P[0], hs = 'min(100vw, calc(85vh * '+(h.width/h.height).toFixed(4)+'))';
     if (h.height > h.width) hero.classList.add('portrait');
     hero.innerHTML = '<a href="#'+slug(h)+'" data-i="0" aria-label="Open '+esc(h.title)+' full screen">'+picture(h, hs, 'fetchpriority="high" loading="eager"')+'</a>' +
-      '<p class="cap"><strong>'+esc(h.title)+'</strong>'+esc(h.caption)+' <span class="by">Photo by Mike Kerr</span></p>';
+      '<p class="cap"><strong>'+esc(h.title)+'</strong>'+esc(h.caption||'')+' <span class="by">Photo by Mike Kerr</span></p>';
   }
   grid.innerHTML = P.map(function(p,i){
     var ar = p.width/p.height;
